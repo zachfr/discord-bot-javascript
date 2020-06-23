@@ -1,0 +1,10 @@
+{
+  "name": "Zach_FR",
+  "version": "1.0.0",
+  "description": "Another cool bot",
+  "main": "bot.js",
+  "author": "Zach_FR",
+  "dependencies": {
+    "discord.js": "^12.2.0"
+  }
+}
