@@ -1,9 +1,13 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 var auth = require('./auth.json');
+var package = require('./package.json');
 
 var prefix = '!';
 var TOKEN = auth.token;
+var VERSION = package.version;
+var AUTHOR = package.author;
+var DESCRIPTION = package.description;
 
 
 client.on('ready', () => {
@@ -25,7 +29,13 @@ client.on('message', msg => {
         msg.channel.send(embed);
     } else if (msg.content === prefix + 'setprefix') {
         prefix = '/';
+    } else if (msg.content === prefix + 'version') {
+        msg.channel.send(info);
     }
 });
+
+const info = new Discord.MessageEmbed()
+    .setTitle('Bot information')
+    .setColor(0xff9800)
 
 client.login(TOKEN);
