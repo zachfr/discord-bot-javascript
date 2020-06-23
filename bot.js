@@ -22,7 +22,7 @@ client.on('message', msg => {
             .setFooter('Zach_FRss Plugin');
         msg.channel.send(embed);
     } else if (msg.content === prefix + 'setprefix') {
-        prefix = '?';
+        prefix = '/';
     }
 });
 
