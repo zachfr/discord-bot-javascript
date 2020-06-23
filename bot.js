@@ -21,7 +21,7 @@ client.on('message', msg => {
         prefix = '/';
     } else if (msg.content === prefix + 'info') {
         msg.channel.send(info);
-    } else if (msg.content === prefix + 'joinmessage') {
+    } else if (msg.content === prefix + 'join message') {
         msg.channel.send(joinmessage);
     }
 });
