@@ -2,12 +2,22 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 var auth = require('./auth.json');
 var package = require('./package.json');
+var request = require('request');
 
 var prefix = '!';
 var TOKEN = auth.token;
 var VERSION = package.version;
 var AUTHOR = package.author;
 var DESCRIPTION = package.description;
+var UPTIME = client.uptime;
+var options = {
+    'method': 'GET',
+    'url': 'https://songoda.com/api/v2/products/join-message-joinmessage',
+    'headers': {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    }
+};
 
 
 client.on('ready', () => {
@@ -23,6 +33,11 @@ client.on('message', msg => {
         msg.channel.send(info);
     } else if (msg.content === prefix + 'join message') {
         msg.channel.send(joinmessage);
+    } else if (msg.content === prefix + 'test') {
+        request(options, function (error, response) {
+            if (error) throw new Error(error);
+            console.log(response.body);
+        });
     }
 });
 
@@ -32,6 +47,7 @@ const info = new Discord.MessageEmbed()
     .setDescription(DESCRIPTION)
     .addField('Author', AUTHOR, true)
     .addField('Version', VERSION, true)
+    .addField('Uptime', UPTIME, true)
     /*.addFields(
         {name: '1', value:'d'},
         {name: '\u200b', value:'\u200b'},

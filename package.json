@@ -5,6 +5,7 @@
   "main": "bot.js",
   "author": "Zach_FR",
   "dependencies": {
-    "discord.js": "^12.2.0"
+    "discord.js": "^12.2.0",
+    "request": "^2.88.2"
   }
 }
