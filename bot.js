@@ -7,6 +7,7 @@ var request = require('request');
 var prefix = '!';
 var TOKEN = auth.token;
 var VERSION = package.version;
+var ACTIVITY = '';
 var AUTHOR = package.author;
 var DESCRIPTION = package.description;
 var UPTIME = client.uptime;
@@ -22,6 +23,7 @@ var options = {
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
+    client.user.setActivity(ACTIVITY, { type: 'WATCHING' });
 });
 
 client.on('message', msg => {
@@ -38,6 +40,15 @@ client.on('message', msg => {
             if (error) throw new Error(error);
             console.log(response.body);
         });
+    } else if (msg.content === prefix + 'setstatus') {
+        ACTIVITY = 'hello';
+        client.user.setActivity(ACTIVITY, { type: 'WATCHING' });
+    } else if (msg.content === prefix + 'status') {
+        if (ACTIVITY === '') {
+            msg.channel.send('Nobody set status for me')
+        } else {
+            msg.channel.send(`My currently status is **${ACTIVITY}**`);
+        }
     }
 });
 
