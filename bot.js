@@ -46,7 +46,7 @@ client.on('message', msg => {
     } else if (command === prefix + 'info') {
         msg.channel.bulkDelete(1, true);
         msg.channel.send(info);
-    } else if (commad === prefix + 'join message') {
+    } else if (command === prefix + 'join message') {
         msg.channel.bulkDelete(1, true);
         msg.channel.send(joinmessage);
     } else if (command === prefix + 'test') {
