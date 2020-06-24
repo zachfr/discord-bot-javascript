@@ -30,8 +30,10 @@ client.on('message', msg => {
     const args = msg.content.slice(prefix.length).split(/ +/);
 	const command = args.shift().toLowerCase();
     if (msg.content === prefix + 'prefix') {
+        msg.channel.bulkDelete(1, true);
         msg.channel.send(`My currently prefix is **${prefix}**`);
     } else if (command === 'setprefix') {
+        msg.channel.bulkDelete(1, true);
         if (!args.length) {
             return msg.channel.send(`You didn't provide any arguments, ${msg.author}!`);
         } else {
@@ -39,15 +41,19 @@ client.on('message', msg => {
             msg.channel.send(`You set the status to **${prefix}**`);
         }
     } else if (msg.content === prefix + 'info') {
+        msg.channel.bulkDelete(1, true);
         msg.channel.send(info);
     } else if (msg.content === prefix + 'join message') {
+        msg.channel.bulkDelete(1, true);
         msg.channel.send(joinmessage);
     } else if (msg.content === prefix + 'test') {
+        msg.channel.bulkDelete(1, true);
         request(options, function (error, response) {
             if (error) throw new Error(error);
             console.log(response.body);
         });
     } else if (command === 'setstatus') {
+        msg.channel.bulkDelete(1, true);
         if (!args.length) {
             return msg.channel.send(`You didn't provide any arguments, ${msg.author}!`);
         } else {
@@ -56,12 +62,24 @@ client.on('message', msg => {
             client.user.setActivity(ACTIVITY, { type: 'WATCHING' });
         }
     } else if (msg.content === prefix + 'status') {
+        msg.channel.bulkDelete(1, true);
         if (ACTIVITY === '') {
             msg.channel.send('Nobody set status for me')
         } else {
             msg.channel.send(`My currently status is **${ACTIVITY}**`);
         }
-    }
+    } else if (command === 'purge') {
+		const amount = parseInt(args[0]) + 1;
+		if (isNaN(amount)) {
+			return msg.reply('That doesn\'t seem to be a valid number.');
+		} else if (amount <= 1 || amount > 100) {
+			return msg.reply('You need to input a number between 1 and 99.');
+		}
+		msg.channel.bulkDelete(amount, true).catch(err => {
+			console.error(err);
+			msg.channel.send('There was an error trying to purge messages in this channel!');
+		});
+	}
 });
 
 const info = new Discord.MessageEmbed()
