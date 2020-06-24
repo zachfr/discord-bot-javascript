@@ -27,10 +27,17 @@ client.on('ready', () => {
 });
 
 client.on('message', msg => {
+    const args = msg.content.slice(prefix.length).split(/ +/);
+	const command = args.shift().toLowerCase();
     if (msg.content === prefix + 'prefix') {
-        msg.reply('The currently prefix is ' + prefix);
-    } else if (msg.content === prefix + 'setprefix') {
-        prefix = '/';
+        msg.channel.send(`My currently prefix is **${prefix}**`);
+    } else if (command === 'setprefix') {
+        if (!args.length) {
+            return msg.channel.send(`You didn't provide any arguments, ${msg.author}!`);
+        } else {
+            prefix = `${args[0]}`;
+            msg.channel.send(`You set the status to **${prefix}**`);
+        }
     } else if (msg.content === prefix + 'info') {
         msg.channel.send(info);
     } else if (msg.content === prefix + 'join message') {
@@ -40,9 +47,14 @@ client.on('message', msg => {
             if (error) throw new Error(error);
             console.log(response.body);
         });
-    } else if (msg.content === prefix + 'setstatus') {
-        ACTIVITY = 'hello';
-        client.user.setActivity(ACTIVITY, { type: 'WATCHING' });
+    } else if (command === 'setstatus') {
+        if (!args.length) {
+            return msg.channel.send(`You didn't provide any arguments, ${msg.author}!`);
+        } else {
+            ACTIVITY = `${args[0]}`;
+            msg.channel.send(`You set the status to **${ACTIVITY}**`);
+            client.user.setActivity(ACTIVITY, { type: 'WATCHING' });
+        }
     } else if (msg.content === prefix + 'status') {
         if (ACTIVITY === '') {
             msg.channel.send('Nobody set status for me')
