@@ -124,7 +124,7 @@ client.on('message', msg => {
         } else {
           let eb = new Discord.MessageEmbed()
           .setTitle(":x: Wrong Usage!")
-          .setDescription("Usage: !!songoda plugin <Plugin>");
+          .setDescription("Usage: !songoda plugin <Plugin>");
           msg.channel.send(eb);
         }
     } else if (command === prefix + 'server') {
@@ -310,6 +310,15 @@ const joinmessage = new Discord.MessageEmbed()
 
 const help = new Discord.MessageEmbed()
     .setTitle('Help center')
+    .addField("❯ !help", 'Show help center', true)
+    .addField("❯ !server help", 'Show help center server', true)
+    .addField("❯ !songoda", 'Search plugin on Songoda', true)
+    .addField("❯ !status", 'Show currently status of bot', true)
+    .addField("❯ !setstatus", 'Set status of bot', true)
+    .addField("❯ !join message", 'Show Join message plugin', true)
+    .addField("❯ !info", 'Show information on bot', true)
+    .addField("❯ !prefix", 'Show currently prefix of bot', true)
+    .addField("❯ !setprefix", 'Set prefix of bot', true)
     .setFooter("Zach_FR's plugin");
 
 const helpserver = new Discord.MessageEmbed()
