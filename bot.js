@@ -40,56 +40,62 @@ client.on('message', msg => {
     const args = msg.content.split(" ");
     const command = args[0];
     args.shift();
+    var STAFF = msg.member.roles.cache.has('724816981102034954');
     if (command === prefix + 'prefix') {
-        msg.channel.bulkDelete(1, true);
         msg.channel.send(`My currently prefix is **${prefix}**`);
     } else if (command === prefix + 'setprefix') {
-        msg.channel.bulkDelete(1, true);
-        if (!args.length) {
-            return msg.channel.send(`You didn't provide any arguments, ${msg.author}!`);
+        if (STAFF) {
+            if (!args.length) {
+                return msg.channel.send(`You didn't provide any arguments, ${msg.author}!`);
+            } else {
+                prefix = `${args[0]}`;
+                msg.channel.send(`You set the status to **${prefix}**`);
+            }
         } else {
-            prefix = `${args[0]}`;
-            msg.channel.send(`You set the status to **${prefix}**`);
+            msg.channel.send(`You don't have the permmision to do that, ${msg.author}!`);
         }
     } else if (command === prefix + 'info') {
-        msg.channel.bulkDelete(1, true);
         msg.channel.send(info);
     } else if (command === prefix + 'join message') {
-        msg.channel.bulkDelete(1, true);
         msg.channel.send(joinmessage);
     } else if (command === prefix + 'test') {
-        msg.channel.bulkDelete(1, true);
         request(options, function (error, response) {
             if (error) throw new Error(error);
             console.log(response.body);
         });
     } else if (command === prefix + 'setstatus') {
-        msg.channel.bulkDelete(1, true);
-        if (!args.length) {
-            return msg.channel.send(`You didn't provide any arguments, ${msg.author}!`);
+        if (STAFF) {
+            if (!args.length) {
+                return msg.channel.send(`You didn't provide any arguments, ${msg.author}!`);
+            } else {
+                ACTIVITY = `${args[0]}`;
+                msg.channel.send(`You set the status to **${ACTIVITY}**`);
+                client.user.setActivity(ACTIVITY, { type: 'WATCHING' });
+            }
         } else {
-            ACTIVITY = `${args[0]}`;
-            msg.channel.send(`You set the status to **${ACTIVITY}**`);
-            client.user.setActivity(ACTIVITY, { type: 'WATCHING' });
+            msg.channel.send(`You don't have the permmision to do that, ${msg.author}!`);
         }
     } else if (command === prefix + 'status') {
-        msg.channel.bulkDelete(1, true);
         if (ACTIVITY === '') {
             msg.channel.send('Nobody set status for me')
         } else {
             msg.channel.send(`My currently status is **${ACTIVITY}**`);
         }
     } else if (command === prefix + 'purge') {
-		const amount = parseInt(args[0]) + 1;
-		if (isNaN(amount)) {
-			return msg.reply('That doesn\'t seem to be a valid number.');
-		} else if (amount <= 1 || amount > 100) {
-			return msg.reply('You need to input a number between 1 and 99.');
-		}
-		msg.channel.bulkDelete(amount, true).catch(err => {
-			console.error(err);
-			msg.channel.send('There was an error trying to purge messages in this channel!');
-		});
+        if (STAFF) {
+            const amount = parseInt(args[0]) + 1;
+            if (isNaN(amount)) {
+                return msg.reply('That doesn\'t seem to be a valid number.');
+            } else if (amount <= 1 || amount > 100) {
+                return msg.reply('You need to input a number between 1 and 99.');
+            }
+            msg.channel.bulkDelete(amount, true).catch(err => {
+                console.error(err);
+                msg.channel.send('There was an error trying to purge messages in this channel!');
+            });
+        } else {
+            msg.channel.send(`You don't have the permmision to do that, ${msg.author}!`);
+        }
 	} else if (command === prefix + 'help') {
         msg.channel.send(help);
     } else if (command === prefix + 'songoda') {
@@ -129,163 +135,184 @@ client.on('message', msg => {
         }
     } else if (command === prefix + 'server') {
         if (args[0] === 'stats') {
-            if (args[1] === '1.15') {
-                application.getServerInfo('7263b879').then(response => {
-                    application.getRAMUsage('7263b879').then(ram => {
-                        application.getDiskUsage('7263b879').then(disk => {
-                            application.getCPUUsage('7263b879').then(cpu => {
-                                let ab = new Discord.MessageEmbed()
-                                    ab.setDescription('Minecraft server 1.15.2')
-                                    ab.addField("❯ Name of server", response.attributes.name, true);
-                                    ab.addField("❯ Max Memory", `${ram.current}/${response.attributes.limits.memory}GB`, true);
-                                    ab.addField("❯ Max Disk space", `${disk.current}/${response.attributes.limits.disk}MB`, true);
-                                    ab.addField("❯ Cpu usage", `${cpu.current}%`, true);
-                                msg.channel.send(ab);
+            if (STAFF) {
+                if (args[1] === '1.15') {
+                    application.getServerInfo('7263b879').then(response => {
+                        application.getRAMUsage('7263b879').then(ram => {
+                            application.getDiskUsage('7263b879').then(disk => {
+                                application.getCPUUsage('7263b879').then(cpu => {
+                                    let ab = new Discord.MessageEmbed()
+                                        ab.setDescription('Minecraft server 1.15.2')
+                                        ab.addField("❯ Name of server", response.attributes.name, true);
+                                        ab.addField("❯ Max Memory", `${ram.current}/${response.attributes.limits.memory}GB`, true);
+                                        ab.addField("❯ Max Disk space", `${disk.current}/${response.attributes.limits.disk}MB`, true);
+                                        ab.addField("❯ Cpu usage", `${cpu.current}%`, true);
+                                    msg.channel.send(ab);
+                                })
                             })
                         })
                     })
-                })
-            } else if (args[1] === '1.12') {
-                application.getServerInfo('355c9866').then(response => {
-                    application.getRAMUsage('355c9866').then(ram => {
-                        application.getDiskUsage('355c9866').then(disk => {
-                            application.getCPUUsage('355c9866').then(cpu => {
-                                let ab = new Discord.MessageEmbed()
-                                    ab.setDescription('Minecraft server 1.15.2')
-                                    ab.addField("❯ Name of server", response.attributes.name, true);
-                                    ab.addField("❯ Max Memory", `${ram.current}/${response.attributes.limits.memory}GB`, true);
-                                    ab.addField("❯ Max Disk space", `${disk.current}/${response.attributes.limits.disk}MB`, true);
-                                    ab.addField("❯ Cpu usage", `${cpu.current}%`, true);
-                                msg.channel.send(ab);
+                } else if (args[1] === '1.12') {
+                    application.getServerInfo('355c9866').then(response => {
+                        application.getRAMUsage('355c9866').then(ram => {
+                            application.getDiskUsage('355c9866').then(disk => {
+                                application.getCPUUsage('355c9866').then(cpu => {
+                                    let ab = new Discord.MessageEmbed()
+                                        ab.setDescription('Minecraft server 1.15.2')
+                                        ab.addField("❯ Name of server", response.attributes.name, true);
+                                        ab.addField("❯ Max Memory", `${ram.current}/${response.attributes.limits.memory}GB`, true);
+                                        ab.addField("❯ Max Disk space", `${disk.current}/${response.attributes.limits.disk}MB`, true);
+                                        ab.addField("❯ Cpu usage", `${cpu.current}%`, true);
+                                    msg.channel.send(ab);
+                                })
                             })
                         })
                     })
-                })
-            } else if (args[1] === '1.8') {
-                application.getServerInfo('9b3290a8').then(response => {
-                    application.getRAMUsage('9b3290a8').then(ram => {
-                        application.getDiskUsage('9b3290a8').then(disk => {
-                            application.getCPUUsage('9b3290a8').then(cpu => {
-                                let ab = new Discord.MessageEmbed()
-                                    ab.setDescription('Minecraft server 1.15.2')
-                                    ab.addField("❯ Name of server", response.attributes.name, true);
-                                    ab.addField("❯ Max Memory", `${ram.current}/${response.attributes.limits.memory}GB`, true);
-                                    ab.addField("❯ Max Disk space", `${disk.current}/${response.attributes.limits.disk}MB`, true);
-                                    ab.addField("❯ Cpu usage", `${cpu.current}%`, true);
-                                msg.channel.send(ab);
+                } else if (args[1] === '1.8') {
+                    application.getServerInfo('9b3290a8').then(response => {
+                        application.getRAMUsage('9b3290a8').then(ram => {
+                            application.getDiskUsage('9b3290a8').then(disk => {
+                                application.getCPUUsage('9b3290a8').then(cpu => {
+                                    let ab = new Discord.MessageEmbed()
+                                        ab.setDescription('Minecraft server 1.15.2')
+                                        ab.addField("❯ Name of server", response.attributes.name, true);
+                                        ab.addField("❯ Max Memory", `${ram.current}/${response.attributes.limits.memory}GB`, true);
+                                        ab.addField("❯ Max Disk space", `${disk.current}/${response.attributes.limits.disk}MB`, true);
+                                        ab.addField("❯ Cpu usage", `${cpu.current}%`, true);
+                                    msg.channel.send(ab);
+                                })
                             })
                         })
                     })
-                })
-            } else if (args[1] === 'bot') {
-                application.getServerInfo('0935a9c9').then(response => {
-                    application.getRAMUsage('0935a9c9').then(ram => {
-                        application.getDiskUsage('0935a9c9').then(disk => {
-                            application.getCPUUsage('0935a9c9').then(cpu => {
-                                let ab = new Discord.MessageEmbed()
-                                    ab.setDescription('Minecraft server 1.15.2')
-                                    ab.addField("❯ Name of server", response.attributes.name, true);
-                                    ab.addField("❯ Max Memory", `${ram.current}/${response.attributes.limits.memory}GB`, true);
-                                    ab.addField("❯ Max Disk space", `${disk.current}/${response.attributes.limits.disk}MB`, true);
-                                    ab.addField("❯ Cpu usage", `${cpu.current}%`, true);
-                                msg.channel.send(ab);
+                } else if (args[1] === 'bot') {
+                    application.getServerInfo('0935a9c9').then(response => {
+                        application.getRAMUsage('0935a9c9').then(ram => {
+                            application.getDiskUsage('0935a9c9').then(disk => {
+                                application.getCPUUsage('0935a9c9').then(cpu => {
+                                    let ab = new Discord.MessageEmbed()
+                                        ab.setDescription('Minecraft server 1.15.2')
+                                        ab.addField("❯ Name of server", response.attributes.name, true);
+                                        ab.addField("❯ Max Memory", `${ram.current}/${response.attributes.limits.memory}GB`, true);
+                                        ab.addField("❯ Max Disk space", `${disk.current}/${response.attributes.limits.disk}MB`, true);
+                                        ab.addField("❯ Cpu usage", `${cpu.current}%`, true);
+                                    msg.channel.send(ab);
+                                })
                             })
                         })
                     })
-                })
+                }
+            } else {
+                msg.channel.send(`You don't have the permmision to do that, ${msg.author}!`);
             }
         } else if (args[0] === 'kill') {
-            if (args[1] === '1.15') {
-                application.killServer('7263b879').then(response => {
-                    msg.channel.send(`You have successfully kill server ${args[1]}, ${msg.author}!`);
-                })
-            } else if (args[1] === '1.12') {
-                application.killServer('355c9866').then(response => {
-                    msg.channel.send(`You have successfully kill server ${args[1]}, ${msg.author}!`);
-                })
-            } else if (args[1] === '1.8') {
-                application.killServer('9b3290a8').then(response => {
-                    msg.channel.send(`You have successfully kill server ${args[1]}, ${msg.author}!`);
-                })
-            } else if (args[1] === 'bot') {
-                application.killServer('0935a9c9').then(response => {
-                    msg.channel.send(`You have successfully kill server ${args[1]}, ${msg.author}!`);
-                })
+            if (STAFF) {
+                if (args[1] === '1.15') {
+                    application.killServer('7263b879').then(response => {
+                        msg.channel.send(`You have successfully kill server ${args[1]}, ${msg.author}!`);
+                    })
+                } else if (args[1] === '1.12') {
+                    application.killServer('355c9866').then(response => {
+                        msg.channel.send(`You have successfully kill server ${args[1]}, ${msg.author}!`);
+                    })
+                } else if (args[1] === '1.8') {
+                    application.killServer('9b3290a8').then(response => {
+                        msg.channel.send(`You have successfully kill server ${args[1]}, ${msg.author}!`);
+                    })
+                } else if (args[1] === 'bot') {
+                    application.killServer('0935a9c9').then(response => {
+                        msg.channel.send(`You have successfully kill server ${args[1]}, ${msg.author}!`);
+                    })
+                } else {
+                    msg.channel.send(`You didn't provide server, ${msg.author}!`);
+                }
             } else {
-                msg.channel.send(`You didn't provide server, ${msg.author}!`);
+                msg.channel.send(`You don't have the permmision to do that, ${msg.author}!`);
             }
         } else if (args[0] === 'stop') {
-            if (args[1] === '1.15') {
-                application.stopServer('7263b879').then(response => {
-                    msg.channel.send(`You have successfully stop server ${args[1]}, ${msg.author}!`);
-                })
-            } else if (args[1] === '1.12') {
-                application.stopServer('355c9866').then(response => {
-                    msg.channel.send(`You have successfully stop server ${args[1]}, ${msg.author}!`);
-                })
-            } else if (args[1] === '1.8') {
-                application.stopServer('9b3290a8').then(response => {
-                    msg.channel.send(`You have successfully stop server ${args[1]}, ${msg.author}!`);
-                })
-            } else if (args[1] === 'bot') {
-                application.stopServer('0935a9c9').then(response => {
-                    msg.channel.send(`You have successfully stop server ${args[1]}, ${msg.author}!`);
-                })
+            if (STAFF) {
+                if (args[1] === '1.15') {
+                    application.stopServer('7263b879').then(response => {
+                        msg.channel.send(`You have successfully stop server ${args[1]}, ${msg.author}!`);
+                    })
+                } else if (args[1] === '1.12') {
+                    application.stopServer('355c9866').then(response => {
+                        msg.channel.send(`You have successfully stop server ${args[1]}, ${msg.author}!`);
+                    })
+                } else if (args[1] === '1.8') {
+                    application.stopServer('9b3290a8').then(response => {
+                        msg.channel.send(`You have successfully stop server ${args[1]}, ${msg.author}!`);
+                    })
+                } else if (args[1] === 'bot') {
+                    application.stopServer('0935a9c9').then(response => {
+                        msg.channel.send(`You have successfully stop server ${args[1]}, ${msg.author}!`);
+                    })
+                } else {
+                    msg.channel.send(`You didn't provide server, ${msg.author}!`);
+                }
             } else {
-                msg.channel.send(`You didn't provide server, ${msg.author}!`);
+                msg.channel.send(`You don't have the permmision to do that, ${msg.author}!`);
             }
         } else if (args[0] === 'start') {
-            if (args[1] === '1.15') {
-                application.startServer('7263b879').then(response => {
-                    msg.channel.send(`You have successfully start server ${args[1]}, ${msg.author}!`);
-                })
-            } else if (args[1] === '1.12') {
-                application.startServer('355c9866').then(response => {
-                    msg.channel.send(`You have successfully start server ${args[1]}, ${msg.author}!`);
-                })
-            } else if (args[1] === '1.8') {
-                application.startServer('9b3290a8').then(response => {
-                    msg.channel.send(`You have successfully start server ${args[1]}, ${msg.author}!`);
-                })
-            } else if (args[1] === 'bot') {
-                application.startServer('0935a9c9').then(response => {
-                    msg.channel.send(`You have successfully start server ${args[1]}, ${msg.author}!`);
-                })
+            if (STAFF) {
+                if (args[1] === '1.15') {
+                    application.startServer('7263b879').then(response => {
+                        msg.channel.send(`You have successfully start server ${args[1]}, ${msg.author}!`);
+                    })
+                } else if (args[1] === '1.12') {
+                    application.startServer('355c9866').then(response => {
+                        msg.channel.send(`You have successfully start server ${args[1]}, ${msg.author}!`);
+                    })
+                } else if (args[1] === '1.8') {
+                    application.startServer('9b3290a8').then(response => {
+                        msg.channel.send(`You have successfully start server ${args[1]}, ${msg.author}!`);
+                    })
+                } else if (args[1] === 'bot') {
+                    application.startServer('0935a9c9').then(response => {
+                        msg.channel.send(`You have successfully start server ${args[1]}, ${msg.author}!`);
+                    })
+                } else {
+                    msg.channel.send(`You didn't provide server, ${msg.author}!`);
+                }
             } else {
-                msg.channel.send(`You didn't provide server, ${msg.author}!`);
+                msg.channel.send(`You don't have the permmision to do that, ${msg.author}!`);
             }
         } else if (args[0] === 'restart') {
-            if (args[1] === '1.15') {
-                application.restartServer('7263b879').then(response => {
-                    msg.channel.send(`You have successfully restart server ${args[1]}, ${msg.author}!`);
-                })
-            } else if (args[1] === '1.12') {
-                application.restartServer('355c9866').then(response => {
-                    msg.channel.send(`You have successfully restart server ${args[1]}, ${msg.author}!`);
-                })
-            } else if (args[1] === '1.8') {
-                application.restartServer('9b3290a8').then(response => {
-                    msg.channel.send(`You have successfully restart server ${args[1]}, ${msg.author}!`);
-                })
-            } else if (args[1] === 'bot') {
-                application.restartServer('0935a9c9').then(response => {
-                    msg.channel.send(`You have successfully restart server ${args[1]}, ${msg.author}!`);
-                })
+            if (STAFF) {
+                if (args[1] === '1.15') {
+                    application.restartServer('7263b879').then(response => {
+                        msg.channel.send(`You have successfully restart server ${args[1]}, ${msg.author}!`);
+                    })
+                } else if (args[1] === '1.12') {
+                    application.restartServer('355c9866').then(response => {
+                        msg.channel.send(`You have successfully restart server ${args[1]}, ${msg.author}!`);
+                    })
+                } else if (args[1] === '1.8') {
+                    application.restartServer('9b3290a8').then(response => {
+                        msg.channel.send(`You have successfully restart server ${args[1]}, ${msg.author}!`);
+                    })
+                } else if (args[1] === 'bot') {
+                    application.restartServer('0935a9c9').then(response => {
+                        msg.channel.send(`You have successfully restart server ${args[1]}, ${msg.author}!`);
+                    })
+                } else {
+                    msg.channel.send(`You didn't provide server, ${msg.author}!`);
+                }
             } else {
-                msg.channel.send(`You didn't provide server, ${msg.author}!`);
+                msg.channel.send(`You don't have the permmision to do that, ${msg.author}!`);
             }
         } else if (args[0] === 'exe') {
-            if (args[1] === '1.15') {
-                application.sendCommand('7263b879', `${args[2]} ${args[3]}`).then(response => {
-                    msg.channel.send(`You have successfully send commands on server ${args[1]}, ${args[2]} ${args[3]}, ${msg.author}!`);
-                })
+            if (STAFF) {
+                if (args[1] === '1.15') {
+                    application.sendCommand('7263b879', `${args[2]} ${args[3]}`).then(response => {
+                        msg.channel.send(`You have successfully send commands on server ${args[1]}, ${args[2]} ${args[3]}, ${msg.author}!`);
+                    })
+                }
+            } else {
+                msg.channel.send(`You don't have the permmision to do that, ${msg.author}!`);
             }
-        } else if (args[0] === 'help') {
-            msg.channel.send(helpserver);
         } else {
             msg.channel.send(helpserver);
-        }
-            
+        }           
     }
 });
 
@@ -319,6 +346,7 @@ const help = new Discord.MessageEmbed()
     .addField("❯ !info", 'Show information on bot', true)
     .addField("❯ !prefix", 'Show currently prefix of bot', true)
     .addField("❯ !setprefix", 'Set prefix of bot', true)
+    .addField("❯ !purge <number>", 'Delete message', true)
     .setFooter("Zach_FR's plugin");
 
 const helpserver = new Discord.MessageEmbed()
