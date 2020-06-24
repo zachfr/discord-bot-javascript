@@ -15,12 +15,6 @@ var ACTIVITY = '';
 var AUTHOR = package.author;
 var DESCRIPTION = package.description;
 var UPTIME = client.uptime;
-let totalSeconds = (client.uptime / 1000);
-let days = Math.floor(totalSeconds / 86400);
-let hours = Math.floor(totalSeconds / 3600);
-totalSeconds %= 3600;
-let minutes = Math.floor(totalSeconds / 60);
-let seconds = Math.floor(totalSeconds % 60);
 
 var options = {
     'method': 'GET',
@@ -328,7 +322,7 @@ const info = new Discord.MessageEmbed()
     .setDescription(DESCRIPTION)
     .addField('Author', AUTHOR, true)
     .addField('Version', VERSION, true)
-    .addField('Uptime', seconds, true)
+    .addField('Uptime', UPTIME, true)
     .setFooter("Zach_FR's plugin");
     /*.addFields(
         {name: '1', value:'d'},
