@@ -89,13 +89,6 @@ client.on('message', msg => {
           fetch("https://songoda.com/api/v2/products/"+args.join("-").toLowerCase())
           .then(res => res.json())
           .then(json => {
-            if(!cont) {
-              let eb = new Discord.MessageEmbed()
-              .setTitle(":x: Error!")
-              .setDescription("```Unable to find a plugin with the name "+args.join("")+"```");
-              msg.channel.send(eb);
-              return;
-            }
             if(json.data == null){
               let eb = new Discord.MessageEmbed()
               .setTitle(":x: Error!")
