@@ -3,6 +3,7 @@ const client = new Discord.Client();
 var auth = require('./auth.json');
 var package = require('./package.json');
 var request = require('request');
+var songoda = require('./songoda.js');
 
 var prefix = '!';
 var TOKEN = auth.token;
@@ -79,7 +80,11 @@ client.on('message', msg => {
 			console.error(err);
 			msg.channel.send('There was an error trying to purge messages in this channel!');
 		});
-	}
+	} else if (command === 'help') {
+        msg.channel.send(help);
+    } else if (msg.content === prefix + 'songoda') {
+        songoda();
+    }
 });
 
 const info = new Discord.MessageEmbed()
@@ -89,6 +94,7 @@ const info = new Discord.MessageEmbed()
     .addField('Author', AUTHOR, true)
     .addField('Version', VERSION, true)
     .addField('Uptime', UPTIME, true)
+    .setFooter('Zach_FRs Plugin');
     /*.addFields(
         {name: '1', value:'d'},
         {name: '\u200b', value:'\u200b'},
@@ -98,7 +104,9 @@ const joinmessage = new Discord.MessageEmbed()
     .setURL('https://songoda.com/marketplace/product/join-message-joinmessage.378')
     .setColor(0xff9800)
     .setDescription('Custom join/leave message')
-    .setFooter('Zach_FRss Plugin');
+    .setFooter('Zach_FRs Plugin');
 
-
+const help = new Discord.MessageEmbed()
+    .setTitle('Help center')
+    .setFooter('Zach_FRs plugin');
 client.login(TOKEN);
