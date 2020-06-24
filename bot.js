@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
+const fetch = require("node-fetch");
 var auth = require('./auth.json');
 var package = require('./package.json');
 var request = require('request');
@@ -28,12 +29,13 @@ client.on('ready', () => {
 });
 
 client.on('message', msg => {
-    const args = msg.content.slice(prefix.length).split(/ +/);
-	const command = args.shift().toLowerCase();
-    if (msg.content === prefix + 'prefix') {
+    const args = msg.content.split(" ");
+    const command = args[0];
+    args.shift();
+    if (command === prefix + 'prefix') {
         msg.channel.bulkDelete(1, true);
         msg.channel.send(`My currently prefix is **${prefix}**`);
-    } else if (command === 'setprefix') {
+    } else if (command === prefix + 'setprefix') {
         msg.channel.bulkDelete(1, true);
         if (!args.length) {
             return msg.channel.send(`You didn't provide any arguments, ${msg.author}!`);
@@ -41,19 +43,19 @@ client.on('message', msg => {
             prefix = `${args[0]}`;
             msg.channel.send(`You set the status to **${prefix}**`);
         }
-    } else if (msg.content === prefix + 'info') {
+    } else if (command === prefix + 'info') {
         msg.channel.bulkDelete(1, true);
         msg.channel.send(info);
-    } else if (msg.content === prefix + 'join message') {
+    } else if (commad === prefix + 'join message') {
         msg.channel.bulkDelete(1, true);
         msg.channel.send(joinmessage);
-    } else if (msg.content === prefix + 'test') {
+    } else if (command === prefix + 'test') {
         msg.channel.bulkDelete(1, true);
         request(options, function (error, response) {
             if (error) throw new Error(error);
             console.log(response.body);
         });
-    } else if (command === 'setstatus') {
+    } else if (command === prefix + 'setstatus') {
         msg.channel.bulkDelete(1, true);
         if (!args.length) {
             return msg.channel.send(`You didn't provide any arguments, ${msg.author}!`);
@@ -62,14 +64,14 @@ client.on('message', msg => {
             msg.channel.send(`You set the status to **${ACTIVITY}**`);
             client.user.setActivity(ACTIVITY, { type: 'WATCHING' });
         }
-    } else if (msg.content === prefix + 'status') {
+    } else if (command === prefix + 'status') {
         msg.channel.bulkDelete(1, true);
         if (ACTIVITY === '') {
             msg.channel.send('Nobody set status for me')
         } else {
             msg.channel.send(`My currently status is **${ACTIVITY}**`);
         }
-    } else if (command === 'purge') {
+    } else if (command === prefix + 'purge') {
 		const amount = parseInt(args[0]) + 1;
 		if (isNaN(amount)) {
 			return msg.reply('That doesn\'t seem to be a valid number.');
@@ -82,8 +84,48 @@ client.on('message', msg => {
 		});
 	} else if (command === 'help') {
         msg.channel.send(help);
-    } else if (msg.content === prefix + 'songoda') {
-        songoda();
+    } else if (command === prefix + 'songoda') {
+       if(args.length >= 2){
+          fetch("https://songoda.com/api/v2/products/"+args.join("-").toLowerCase())
+          .then(res => res.json())
+          .then(json => {
+            if(!cont) {
+              let eb = new Discord.MessageEmbed()
+              .setTitle(":x: Error!")
+              .setDescription("```Unable to find a plugin with the name "+args.join("")+"```");
+              msg.channel.send(eb);
+              return;
+            }
+            if(json.data == null){
+              let eb = new Discord.MessageEmbed()
+              .setTitle(":x: Error!")
+              .setDescription("```Unable to find a plugin with the name "+args.join("")+"```");
+              msg.channel.send(eb);
+              return;
+            }
+            let eb = new Discord.MessageEmbed()
+              .setDescription(json.data.description);
+            eb.setAuthor(json.data.name, json.data.icon, json.data.url);
+            // e.f(eb, "❯ Author", "");
+            eb.addField("❯ Version", json.data.versions[0].version, false);
+            eb.addField("❯ File", json.data.versions[0].size, true);
+            eb.addField("❯ Downloads", json.data.downloads, true);
+            let rating = Math.round(json.data.rating);
+            let ratingmsg = '';
+            for (let i = 0; i < rating; i++) {
+              ratingmsg += '⭐';
+            }
+            if (ratingmsg == '') ratingmsg = 'No ratings';
+            eb.addField("❯ Rating", ratingmsg, true);
+            msg.channel.send(eb);
+          });
+
+        } else {
+          let eb = new Discord.MessageEmbed()
+          .setTitle(":x: Wrong Usage!")
+          .setDescription("Usage: !!songoda plugin <Plugin>");
+          msg.channel.send(eb);
+        }
     }
 });
 
