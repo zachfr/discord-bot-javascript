@@ -8,13 +8,12 @@ var auth = require('./auth.json');
 var package = require('./package.json');
 var request = require('request');
 var config = require('./config.json');
-var status = require('./commands/setstatus.js');
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
 var prefix = config.prefix;
 var TOKEN = auth.token;
-var STATUS = 'HI?';
+var STATUS = config.status;
 
 /*var options = {
     'method': 'GET',

@@ -1,5 +1,4 @@
-var config = require('./setprefix.js');
-const setprefix = require('../config.json');
+const config = require('../config.json');
 
 module.exports = {
     name: 'prefix',
